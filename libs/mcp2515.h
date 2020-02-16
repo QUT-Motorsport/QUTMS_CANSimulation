@@ -3,12 +3,15 @@
 
 //#include <mega16.h>
 #include <avr/io.h>
+// TempLibrary
+#include <avr/pgmspace.h>
 
 #include <util/delay.h>
 #include <stdint.h>
 
 #include "spi.h"
 #include "mcp2515_defs.h"
+#include "usb_transmit.h"
 
 #define MCP2515_PORT_RESET     PORTF
 #define MCP2515_PIN_RESET      PINF1

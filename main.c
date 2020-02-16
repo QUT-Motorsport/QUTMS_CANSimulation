@@ -33,6 +33,8 @@ int main(void) {
     // "AT command", which can still be buffered.
     usb_serial_flush_input();
     
+    spiMasterINIT();
+
     send_str(PSTR("\r\n==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
      "\r\nMCP2515-driver: logger & tracer"
 	 "\r\n-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\r\n"
@@ -71,6 +73,7 @@ void test_can() {
     i = 0;
     j = 0;
     k = 5000;
+    int16_t r;
     while (1) {
         _delay_us(500);
         j++;              
@@ -83,30 +86,35 @@ void test_can() {
                 
     	        send_message(&msg1); 
                 
-                snprintf(buf, sizeof(buf), "send can: %d", msg1.id);
-                send_str(PSTR(buf));
+                //snprintf(buf, sizeof(buf), "send can: %d", msg1.id);
+                //send_str(PSTR(buf));
             }
             else {                    
                 isLed = 0;
             }
                         
-            snprintf(buf, sizeof(buf), "i: %03d", i);        
+            snprintf(buf, sizeof(buf), "");        
             
-            cmd = recv_str(buf, sizeof(buf));
-            
-            if ( cmd == 0 ) {
+            r = recv_str(buf, sizeof(int16_t));
+            send_str((r));
+            if ( r == 0 ) {
             }
-            else if ( cmd == 'w' ) {
+            else if ( r == 'w' ) {
                 send_str(PSTR("switch to sniffer"));
                 return;
             }
-            else if ( cmd == 's' ) {
+            else if ( r == 's' ) {
                 send_str(PSTR("switch to sniffer"));
                 return;
             }
              
             i++;              
             if (i>1000) i=0;
+            
+            send_str(PSTR("\r\n==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
+                        "\r\nMCP2515: Loop"
+                        "\r\n-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\r\n"));
+                        
         }   
     }
 }

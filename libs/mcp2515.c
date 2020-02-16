@@ -34,9 +34,9 @@ void MCP2515_write_byte(uint8_t addr, uint8_t data) {
 // -=-=-=--=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=
 // MCP2515 chip control
 // -=-=-=--=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=
-void MCP2515_reset(void) {
-	spiMasterTRANSMIT(1);
-	spiMasterTRANSMIT(CMD_RESET);
+void MCP2515_reset(void) {    
+	spiMasterTRANSMIT(1);    
+	spiMasterTRANSMIT(CMD_RESET);    
 	spiMasterTRANSMIT(0);
 }
 
@@ -184,10 +184,16 @@ uint8_t MCP2515_init(void) {
     _delay_ms(300);
     
     // Perform hard reset
+    send_str(PSTR("\r\n==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
+     "\r\nMCP2515: Harware Reset"
+	 "\r\n-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\r\n"));
 	MCP2515_hardware_reset();
 
     // Perform soft reset
-    MCP2515_reset();
+    send_str(PSTR("\r\n==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
+     "\r\nMCP2515: Software Reset"
+	 "\r\n-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\r\n"));
+    MCP2515_reset();    
 	// TODO
     //SJW = 0(1),BRP = 4(5)--> number in brackets is actual value, as mcp2515 adds 1.
 	MCP2515_write_byte(CNF1, 0x04);
@@ -199,6 +205,9 @@ uint8_t MCP2515_init(void) {
 
 	// 0x27
 	// TODO 
+    send_str(PSTR("\r\n==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
+     "\r\nMCP2515: Setting Mask"
+	 "\r\n-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\r\n"));
 	MCP2515_set_mask(0,0,0x27);
 	MCP2515_set_filtr(0,0,0x27);
 	MCP2515_set_filtr(1,0,0x7FF);
@@ -206,8 +215,14 @@ uint8_t MCP2515_init(void) {
 	MCP2515_write_byte(RXB1CTRL,STD_FILTR_RX);
 
 	MCP2515_set_mask(1,0,0x7FF);
+    send_str(PSTR("\r\n==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
+     "\r\nMCP2515: Setting Filter"
+	 "\r\n-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\r\n"));
 	for(i=2; i < FILTR_CNT; i++)
         MCP2515_set_filtr(i,0,0x7FF);
 
+    send_str(PSTR("\r\n==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
+     "\r\nMCP2515: Changing to Normal Mode"
+	 "\r\n-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\r\n"));
 	return MCP2515_mode_normal();
 }
