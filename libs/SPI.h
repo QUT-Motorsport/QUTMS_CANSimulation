@@ -4,6 +4,7 @@
 #include "avr/io.h"
 #include "avr/interrupt.h" 
 
+/* Platform dependent Registers, Ports and Pins*/
 #define DDR_SPI     DDRB    /* Data dir. register for port with SPI */
 #define PORT_SPI    PORTB   /* Port with SPI */
 #define PIN_MOSI    PINB2     /* MOSI pin on the PORTB_SPI */
@@ -14,8 +15,6 @@
 #define PORT_CS     PORTF
 #define PIN_CS      PINF0
 
-#define PORT_RESET     PORTF
-#define PIN_RESET      PINF1
 
 /** \brief Initialization of the SPI interface on the MCU
  * Initialization of the SPI hardware interface - configure this

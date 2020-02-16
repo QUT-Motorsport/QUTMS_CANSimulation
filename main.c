@@ -10,6 +10,8 @@
 #include "macros.h"
 #include "SPI.h"
 #include "usb_transmit.h"
+#include "mcp2515.h"
+
 /* Main Routine*/
 int main(void) {
     set_clock_speed(CPU_8MHz);
@@ -30,6 +32,9 @@ int main(void) {
     
     send_str(PSTR("\r\n==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
      "\r\nMCP2515-driver: logger & tracer"
-	 "\r\n-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\r\n"));
+	 "\r\n-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\r\n"
+    ));
 
+    /* initialize CAN */
+    MCP2515_init();
 }

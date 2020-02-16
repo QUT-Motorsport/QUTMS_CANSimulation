@@ -3,13 +3,10 @@
 void spiMasterINIT() {
     /* Set MOSI and SCK output, all others input */
     DDR_SPI = (1<<PIN_MOSI)|(1<<PIN_SCK)|(1<<PIN_SS);
-    DDRF = (1<<PIN_CS)|(1<PIN_RESET);
+    DDRF = (1<<PIN_CS);
     PORT_SPI |= (1 << PIN_SS); 
     PORT_CS |= (1 << PIN_CS);    
-    
-    // Make reset HIGH to disable it
-    SET_BIT(PORT_RESET, PIN_RESET);
-    
+        
     /* Enable SPI, Master, set clock rate fck/4, mode 0,0 */
     SPCR = (1<<SPE) | (1<<MSTR);
     SPSR = (1<<SPI2X);

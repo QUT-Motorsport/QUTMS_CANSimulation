@@ -40,4 +40,9 @@
 #define HIGH 1
 #define LOW 0
 
+/*
+ * Bit Write
+ */
+#define _BV(bit) (1 << (bit))
+
 #endif /* MACROS_H_ */
