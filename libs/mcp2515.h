@@ -3,7 +3,6 @@
 
 //#include <mega16.h>
 #include <avr/io.h>
-#include <avr/interrupt.h>
 
 #include <util/delay.h>
 #include <stdint.h>

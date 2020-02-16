@@ -10,6 +10,8 @@
 #define CMD_RD_STATUS    0xA0
 #define CMD_BIT_MOD      0x05
 
+/// Number of buffers for send
+#define TXB_CNT      3
 /// Number of Filters
 #define FILTR_CNT    6
 
@@ -92,5 +94,43 @@
 #define MODE_MASK	  (MODE_NORMAL | MODE_SLEEP | MODE_LOOP | MODE_LISTEN | MODE_CONFIG)
 
 #define ERRATA_REP_CNT	20
+
+/* interrupts */
+#define CANINTE   0x2B
+#define CANINTF   0x2C
+
+// Interupt flags
+/// error
+#define MERRIE        _BV(7)
+#define MERRIF        _BV(7)
+#define MERRI        _BV(7)
+/// Activity on a CAN bus
+#define WAKIE        _BV(6)
+#define WAKIF        _BV(6)
+#define WAKI        _BV(6)
+/// Global interrupt allowance upon error
+#define ERRIE        _BV(5)
+#define ERRIF        _BV(5)
+#define ERRI        _BV(5)
+/// Buffer transmission 2 empty
+#define TX2IE        _BV(4)
+#define TX2IF        _BV(4)
+#define TX2I        _BV(4)
+/// Buffer transmission 1 empty
+#define TX1IE        _BV(3)
+#define TX1IF        _BV(3)
+#define TX1I        _BV(3)
+/// Buffer transmission 0 empty
+#define TX0IE        _BV(2)
+#define TX0IF        _BV(2)
+#define TX0I        _BV(2)
+///Buffer transmission 1 empty
+#define RX1IE        _BV(1)
+#define RX1IF        _BV(1)
+#define RX1I        _BV(1)
+/// Buffer transmission 0 empty
+#define RX0IE        _BV(0)
+#define RX0IF        _BV(0)
+#define RX0I        _BV(0)
 
 #endif
