@@ -1,3 +1,17 @@
+#define save_screen save_screen_IS_NOT_PERMITTED
+#define auto_save_screen auto_save_screen_IS_NOT_PERMITTED
+#define system system_IS_NOT_PERMITTED
+#define fopen fopen_IS_NOT_PERMITTED
+#define open open_IS_NOT_PERMITTED
+#define opendir opendir_IS_NOT_PERMITTED
+#define readdir readdir_IS_NOT_PERMITTED
+#define closedir closedir_IS_NOT_PERMITTED
+#define getch getch_IS_NOT_PERMITTED
+#define zdk_save_stream zdk_save_stream_IS_NOT_PERMITTED
+#define zdk_input_stream zdk_input_stream_IS_NOT_PERMITTED
+#define zdk_suppress_output zdk_suppress_output_IS_NOT_PERMITTED
+#define zdk_timer_pause zdk_timer_pause_IS_NOT_PERMITTED
+#define zdk_get_current_time zdk_get_current_time_IS_NOT_PERMITTED
 /* USB Serial Example for Teensy USB Development Board
  * http://www.pjrc.com/teensy/usb_serial.html
  * Copyright (c) 2008,2010,2011 PJRC.COM, LLC
@@ -272,10 +286,10 @@ static struct usb_string_descriptor_struct PROGMEM const string3 = {
 // This table defines which descriptor data is sent for each specific
 // request from the host (in wValue and wIndex).
 static struct descriptor_list_struct {
-	uint16_t	wValue;
-	uint16_t	wIndex;
+	uint16_t	    wValue;
+	uint16_t	    wIndex;
 	const uint8_t	*addr;
-	uint8_t		length;
+	uint8_t		    length;
 } PROGMEM const descriptor_list[] = {
 	{0x0100, 0x0000, device_descriptor, sizeof(device_descriptor)},
 	{0x0200, 0x0000, config1_descriptor, sizeof(config1_descriptor)},
@@ -932,5 +946,3 @@ ISR(USB_COM_vect)
         }
 	UECONX = (1<<STALLRQ) | (1<<EPEN);	// stall
 }
-
-

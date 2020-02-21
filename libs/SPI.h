@@ -12,9 +12,12 @@
 #define PIN_SCK     PINB1     /* SCK pin on the PORTB_SPI */
 #define PIN_SS      PINB0     /* SS pin on the PORTB_SPI */
 
-#define PORT_CS     PORTF
-#define PIN_CS      PINF0
+#define PORT_CS     PORTB
+#define PIN_CS      PINB0
 
+#define SPI_INT_DDR   DDRD
+#define SPI_INT_PORT  PORTD
+#define SPI_INT       (1 << (PIND1))
 
 /** \brief Initialization of the SPI interface on the MCU
  * Initialization of the SPI hardware interface - configure this

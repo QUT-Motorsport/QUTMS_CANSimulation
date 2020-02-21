@@ -4,21 +4,21 @@
 // MCP2515 register manipulation
 // -=-=-=--=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=
 void MCP2515_read_buf(uint8_t addr, uint8_t* buf, uint8_t count) {
-    spiMasterChipSelect(1);             // CS=0
+    spiMasterChipSelect(0);             // CS=0
     spiMasterTRANSMIT(CMD_READ);		// COMMAND
 	spiMasterTRANSMIT(addr);			// ADDRESS
 	for(;count;count--)
 		*buf++ = spiMasterTRANSMIT(0x00);// READING
-	spiMasterChipSelect(0);				// CS=1
+	spiMasterChipSelect(1);				// CS=1
 }
 
 void MCP2515_write_buf(uint8_t addr, uint8_t* buf, uint8_t count) {
-    spiMasterChipSelect(1);             // CS=0
+    spiMasterChipSelect(0);             // CS=0
     spiMasterTRANSMIT(CMD_WRITE);		// COMMAND
 	spiMasterTRANSMIT(addr);			// ADDRESS
 	for(;count;count--)
         spiMasterTRANSMIT(*buf++);		// WRITING
-	spiMasterChipSelect(0);				// CS=1
+	spiMasterChipSelect(1);				// CS=1
 }
 
 uint8_t MCP2515_read_byte(uint8_t addr) {
@@ -35,9 +35,9 @@ void MCP2515_write_byte(uint8_t addr, uint8_t data) {
 // MCP2515 chip control
 // -=-=-=--=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=
 void MCP2515_reset(void) {    
-	spiMasterTRANSMIT(1);    
+	spiMasterChipSelect(0);    
 	spiMasterTRANSMIT(CMD_RESET);    
-	spiMasterTRANSMIT(0);
+	spiMasterChipSelect(1);
 }
 
 void MCP2515_hardware_reset(void) {    
@@ -48,18 +48,18 @@ void MCP2515_hardware_reset(void) {
 
 uint8_t MCP2515_status(void) {
 	uint8_t tmp;
-	spiMasterChipSelect(1);
+	spiMasterChipSelect(0);
 	spiMasterTRANSMIT(CMD_RD_STATUS);
 	tmp = spiMasterTRANSMIT(0x00);
 	spiMasterTRANSMIT(0x00);
-	spiMasterChipSelect(0);
+	spiMasterChipSelect(1);
 	return tmp;
 }
 
 void MCP2515_start_send(uint8_t TXB_mask) {
-	spiMasterChipSelect(1);
-	spiMasterTRANSMIT(CMD_RTS | (TXB_mask & 0x07));
 	spiMasterChipSelect(0);
+	spiMasterTRANSMIT(CMD_RTS | (TXB_mask & 0x07));
+	spiMasterChipSelect(1);
 }
 
 void MCP2515_bit_modify(uint8_t addr, uint8_t mask, uint8_t data) {
@@ -76,12 +76,12 @@ void MCP2515_bit_modify(uint8_t addr, uint8_t mask, uint8_t data) {
         case BFPCTRL:
         case BFPCTRL+1:
         case CANCTRL: //
-            spiMasterChipSelect(1);
+            spiMasterChipSelect(0);
             spiMasterTRANSMIT(CMD_BIT_MOD);
             spiMasterTRANSMIT(addr);
             spiMasterTRANSMIT(mask);
             spiMasterTRANSMIT(data);
-            spiMasterChipSelect(0);
+            spiMasterChipSelect(1);
         default:
             return;
 	}
@@ -133,11 +133,9 @@ uint8_t MCP2515_set_mode(uint8_t mode) {
 		return -1;
 }
 
-uint8_t MCP2515_mode_normal(void) {
-    uint8_t i;
-	
-    // ERRATA    
-	for ( i=0; i< ERRATA_REP_CNT; i++ ) {
+uint8_t MCP2515_mode_normal(void) {     
+    // ERRATA byte to set a normal mode with number of trials.
+	for (uint8_t i=0; i< ERRATA_REP_CNT; i++ ) {
         if(MCP2515_set_mode(MODE_NORMAL) == 0) {
 			return 0;
 		} else {
@@ -175,8 +173,11 @@ void MCP2515_set_bf_pin(uint8_t data) {
 	MCP2515_write_byte(BFPCTRL, data & ANYBFS);
 }
 
-uint8_t MCP2515_init(void) {
-    uint8_t i;
+uint8_t MCP2515_check_message(void) {
+	return (SPI_INT_PORT & SPI_INT) == 0;
+}
+
+uint8_t MCP2515_init(void) {    
     DDRF = (1<<MCP2515_PIN_RESET);
     
     // Make reset HIGH to disable it    
@@ -184,45 +185,67 @@ uint8_t MCP2515_init(void) {
     _delay_ms(300);
     
     // Perform hard reset
-    send_str(PSTR("\r\n==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
-     "\r\nMCP2515: Harware Reset"
-	 "\r\n-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\r\n"));
-	MCP2515_hardware_reset();
+    // send_str(PSTR(
+    //  "\r\nMCP2515: Harware Reset\r\n"));
+	// MCP2515_hardware_reset();
 
     // Perform soft reset
-    send_str(PSTR("\r\n==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
-     "\r\nMCP2515: Software Reset"
-	 "\r\n-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\r\n"));
+    send_str(PSTR(
+     "\r\nMCP2515: Software Reset\r\n"));
     MCP2515_reset();    
-	// TODO
+	
     //SJW = 0(1),BRP = 4(5)--> number in brackets is actual value, as mcp2515 adds 1.
-	MCP2515_write_byte(CNF1, 0x04);
-    
+	// MCP2515_write_byte(CNF1, 0x04);    
     //BTL = 1, SAM = 1, PHSEG1 = 001(2), PRSEG = 010 (3)
-	MCP2515_write_byte(CNF2, 0xCA);
+	// MCP2515_write_byte(CNF2, 0xCA);
     //SOF = 0, WAKFIL = 0, PHSEG2 = 001(2).
-	MCP2515_write_byte(CNF3, 0x01);
+	// MCP2515_write_byte(CNF3, 0x01);
+	spiMasterChipSelect(0);
+	spiMasterTRANSMIT(CMD_WRITE);
+	spiMasterTRANSMIT(CNF3);
+	spiMasterTRANSMIT((1<<PHSEG21));		// Bitrate 125 kbps at 16 MHz
+	spiMasterTRANSMIT((1<<BTLMODE)|(1<<PHSEG11));
+	spiMasterTRANSMIT((1<<BRP2)|(1<<BRP1)|(1<<BRP0));
 
-	// 0x27
-	// TODO 
-    send_str(PSTR("\r\n==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
-     "\r\nMCP2515: Setting Mask"
-	 "\r\n-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\r\n"));
-	MCP2515_set_mask(0,0,0x27);
-	MCP2515_set_filtr(0,0,0x27);
-	MCP2515_set_filtr(1,0,0x7FF);
-	MCP2515_write_byte(RXB0CTRL,NOFILTR_RX | BUKT);	
-	MCP2515_write_byte(RXB1CTRL,STD_FILTR_RX);
+	// activate interrupts
+	spiMasterTRANSMIT((1<<RX1IE)|(1<<RX0IE));
+	spiMasterChipSelect(1);
+	
+	// test if we could read back the value => is the chip accessible? 
+	if (MCP2515_read_byte(CNF1) != ((1<<BRP2)|(1<<BRP1)|(1<<BRP0))) {
+		send_str(PSTR(
+     		"\r\nMCP2515: CNF1 not passed\r\n"));
+		return -1;
+	}
+	// if (MCP2515_read_byte(CNF3) != ((1<<BRP2)|(1<<BRP1)|(1<<BRP0))) {
+	// 	send_str(PSTR(
+    //  		"\r\nMCP2515: CNF3 not passed\r\n"));
+	// 	return -1;
+	// }
+	
+    send_str(PSTR(
+     "\r\nMCP2515: Setting Mask\r\n"));
+	// deaktivate the RXnBF Pins (High Impedance State)
+	MCP2515_write_byte(BFPCTRL, 0);
+	
+	// set TXnRTS as inputs
+	MCP2515_write_byte(TXRTSCTRL, 0);
+
+	// turn off filters => receive any message
+	MCP2515_write_byte(RXB0CTRL, RXM1 | RXM0);
+	MCP2515_write_byte(RXB1CTRL, RXM1 | RXM0);
 
 	MCP2515_set_mask(1,0,0x7FF);
-    send_str(PSTR("\r\n==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
-     "\r\nMCP2515: Setting Filter"
-	 "\r\n-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\r\n"));
-	for(i=2; i < FILTR_CNT; i++)
-        MCP2515_set_filtr(i,0,0x7FF);
+    send_str(PSTR(
+     "\r\nMCP2515: Deactivating remaining Filters\r\n"));
+	for(uint8_t i=2; i < FILTR_CNT; i++)  MCP2515_set_filtr(i,0,0x7FF);
 
-    send_str(PSTR("\r\n==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
-     "\r\nMCP2515: Changing to Normal Mode"
-	 "\r\n-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\r\n"));
-	return MCP2515_mode_normal();
+    send_str(PSTR(
+     "\r\nMCP2515: Changing to Normal Mode\r\n"));
+	
+	if(MCP2515_mode_normal() != 0) {
+		return -2;
+	}
+
+	return 0;
 }

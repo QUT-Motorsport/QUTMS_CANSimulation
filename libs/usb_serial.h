@@ -1,3 +1,17 @@
+#define save_screen save_screen_IS_NOT_PERMITTED
+#define auto_save_screen auto_save_screen_IS_NOT_PERMITTED
+#define system system_IS_NOT_PERMITTED
+#define fopen fopen_IS_NOT_PERMITTED
+#define open open_IS_NOT_PERMITTED
+#define opendir opendir_IS_NOT_PERMITTED
+#define readdir readdir_IS_NOT_PERMITTED
+#define closedir closedir_IS_NOT_PERMITTED
+#define getch getch_IS_NOT_PERMITTED
+#define zdk_save_stream zdk_save_stream_IS_NOT_PERMITTED
+#define zdk_input_stream zdk_input_stream_IS_NOT_PERMITTED
+#define zdk_suppress_output zdk_suppress_output_IS_NOT_PERMITTED
+#define zdk_timer_pause zdk_timer_pause_IS_NOT_PERMITTED
+#define zdk_get_current_time zdk_get_current_time_IS_NOT_PERMITTED
 #ifndef usb_serial_h__
 #define usb_serial_h__
 

@@ -7,8 +7,11 @@ LIBS=-Wl,-u,vfprintf -lprintf_flt -lm
 
 main: main.c
 	avr-gcc $@.c libs/*.c $(FLAGS) -I$(DIRS) -L$(DIRS) $(LIBS) -o $@.o
+	avr-objcopy -O ihex $@.o $@.hex 	
+build:
+	avr-gcc $@.c libs/*.c $(FLAGS) -I$(DIRS) -L$(DIRS) $(LIBS) -o $@.o
 	avr-objcopy -O ihex $@.o $@.hex 
-
+	teensy_loader_cli -mmcu=atmega32u4 -w @.hex
 clean:
 	rm *.o
 	rm *.hex

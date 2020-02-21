@@ -1,6 +1,9 @@
 #ifndef	_CAN_H
 #define	_CAN_H
-#include <string.h> 
+#include <string.h>
+#include <stdint.h>
+#include <stdio.h>
+
 
 #include "mcp2515.h"
 #include "mcp2515_defs.h"
@@ -44,14 +47,6 @@ typedef enum{
 void init_msg(CanMessage* msg);
 
 /**
- * Return first found TXB, available for send.
- * 
- * @return returns 0, if not TXB or address
- * from base register TXB
-*/
-static uint8_t get_free_txb(void);
-
-/**
  * Check if all TXB occupied
  * 
  * @return if available TXB, returns 0, othervise !0
@@ -76,15 +71,6 @@ CAN_TX_STATE state_tx(CanMessage* msg);
 CAN_RESULT send_message(CanMessage* msg);
 
 /**
- * Extracts message from buffer.
- * 
- * Functions fils the structure with zeros
- * @param addr - address of the register
- * @param msg - pointer to a message
-*/
-static void get_msg(uint8_t addr, CanMessage* msg);
-
-/**
  * Reading accepted messages.
  * As buffer 0 has a priority, first messages are read from it, and only if
  * there is no messages, the next one will be read.
@@ -101,5 +87,15 @@ CAN_RESULT read_message(CanMessage* msg);
  * @param Number of accepted messages
 */
 uint8_t resived_msg(void);
+
+/**
+ * Prints CAN message in the USB serial
+*/
+void print_can_message(CanMessage *message);
+
+/**
+ * Perform self test after initialising the controller
+*/
+uint8_t mcp_loopback(void);
 
 #endif

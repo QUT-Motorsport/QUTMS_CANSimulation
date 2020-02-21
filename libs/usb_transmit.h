@@ -1,5 +1,6 @@
 #include <usb_serial.h>
 #include <avr/pgmspace.h>
+#include <string.h>
 
 // Send a string to the USB serial port.  The string must be in
 // flash memory, using PSTR
@@ -13,6 +14,9 @@ void send_str(const char *s);
 // the virtual serial connection was closed while waiting.
 //
 uint8_t recv_str(char *buf, uint8_t size);
+
+/* Prints a buffer. Ussed printing CAN messages */
+void send_buffer(char * buffer);
 
 /* Send the number in the hexadecimal format */
 void writeInHex(unsigned char number);

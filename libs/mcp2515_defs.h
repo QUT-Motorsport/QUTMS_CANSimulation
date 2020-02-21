@@ -133,4 +133,39 @@
 #define RX0IF        _BV(0)
 #define RX0I        _BV(0)
 
+/** \brief	Bit definition for CANCTRL */
+#define REQOP2		7
+#define REQOP1		6
+#define REQOP0		5
+#define ABAT		4
+#define CLKEN		2
+#define CLKPRE1		1
+#define CLKPRE0		0
+
+/** \brief	Bit definition for CNF3 */
+#define WAKFIL		6
+#define PHSEG22		2
+#define PHSEG21		1
+#define PHSEG20		0
+
+/** \brief	Bit definition for CNF2 */
+#define BTLMODE		7
+#define SAM			6
+#define PHSEG12		5
+#define PHSEG11		4
+#define PHSEG10		3
+#define PHSEG2		2
+#define PHSEG1		1
+#define PHSEG0		0
+
+/** \brief	Bit definition for CNF1 */
+#define SJW1		7
+#define SJW0		6
+#define BRP5		5
+#define BRP4		4
+#define BRP3		3
+#define BRP2		2
+#define BRP1		1
+#define BRP0		0
+
 #endif

@@ -4,6 +4,12 @@ void init_msg(CanMessage* msg) {
 	memset(msg,0,sizeof(CanMessage));
 }
 
+/**
+ * Return first found TXB, available for send.
+ * 
+ * @return returns 0, if not TXB or address
+ * from base register TXB
+*/
 static uint8_t get_free_txb(void) {
     uint8_t txb;
 	// Go through all available TXB
@@ -69,6 +75,13 @@ CAN_RESULT send_message(CanMessage* msg) {
 	return CAN_OK;
 }
 
+/**
+ * Extracts message from buffer.
+ * 
+ * Functions fils the structure with zeros
+ * @param addr - address of the register
+ * @param msg - pointer to a message
+*/
 static void get_msg(uint8_t addr, CanMessage* msg) {
 	uint8_t tmp; 
     uint16_t t2;	
@@ -122,4 +135,94 @@ uint8_t resived_msg(void) {
 	default:
 		return 2;
 	}
+}
+
+void print_can_message(CanMessage *message) {
+	uint8_t length = message->dlc;
+    char buf[24];
+
+    snprintf(buf, sizeof(buf), "id:     0x%lu\r\n", message->id);
+    send_buffer( buf );
+
+    snprintf(buf, sizeof(buf), "length: %d\r\n", length);
+    send_buffer( buf );
+
+    snprintf(buf, sizeof(buf), "rtr:    %d,  ext_id:    %d  \r\n", message->rtr, message->ext_id);
+    send_buffer( buf );
+    	
+	if (!message->rtr) {
+        send_str(PSTR("---data---\r\n" ));
+		
+		for (uint8_t i = 0; i < length; i++) {
+            snprintf(buf, sizeof(buf), "0x%02x ", message->dta[i]);
+            send_buffer( buf );
+		}
+        send_str(PSTR("\r\n------\r\n" ));
+	}
+}
+
+uint8_t mcp_loopback(void){
+	
+	CanMessage message;
+    CAN_RESULT res;
+	
+    send_str(PSTR("\r\n\r\n-- Start testing loopback -- \r\n" ));
+ 
+ 	// einige Testwerte
+	message.id = 0x123;
+	message.rtr = 0;
+	message.dlc = 2;
+	message.dta[0] = 0x04;
+	message.dta[1] = 0xf3;
+	
+    uint8_t err = 0;
+	
+    send_str(PSTR("switch to loopback mode\r\n" ));
+    if (MCP2515_mode_loopback() != 0) {
+        send_str(PSTR("Error: no switch to loopback mode\r\n" ));
+        err |= 0x01;
+    }
+	
+	// Sende eine Nachricht
+    res = send_message(&message); 
+	if (res == CAN_OK) {
+        send_str(PSTR("Message was written to the buffer\r\n" ));        
+    	print_can_message(&message);        
+	}
+	else {
+        send_str(PSTR("Error: could not send the message\r\n" ));
+        err |= 0x02;
+	}
+	
+	// warte ein bisschen
+	_delay_ms(10);
+	
+	if (MCP2515_check_message()) {
+        send_str(PSTR("Message received!\r\n" ));
+		
+		// read the message from the buffers
+		if (read_message(&message) == CAN_OK) {
+            send_str(PSTR("---- received message ---- \r\n" ));
+			print_can_message(&message);
+            send_str(PSTR("-successfull-\r\n" ));
+		}
+		else {
+            send_str(PSTR("Error: could not read the message\r\n" ));
+            err |= 0x04;
+		}
+	}
+	else {
+        send_str(PSTR("Error: no message received\r\n" ));
+        err |= 0x08;
+	}
+	
+    send_str(PSTR("back to normal mode\r\n" ));
+    if (MCP2515_mode_normal() != 0) {
+        send_str(PSTR("Error: no switch to normal mode\r\n" ));
+        err |= 0x10;
+    }
+
+    send_str(PSTR("-- Finish testing loopback -- \r\n\r\n" ));
+    	
+    return err;
 }
