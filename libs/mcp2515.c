@@ -122,6 +122,7 @@ void MCP2515_set_filtr(uint8_t id, uint8_t ext, uint32_t filtr) {
 // -=-=-=--=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=
 // MCP2515 MODE CHANGE
 // -=-=-=--=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=
+
 uint8_t MCP2515_set_mode(uint8_t mode) {
 	uint8_t tmp;
 	tmp = MCP2515_read_byte(CANCTRL);
@@ -225,7 +226,7 @@ uint8_t MCP2515_init(void) {
 	
     send_str(PSTR(
      "\r\nMCP2515: Setting Mask\r\n"));
-	// deaktivate the RXnBF Pins (High Impedance State)
+	// deactivate the RXnBF Pins (High Impedance State)
 	MCP2515_write_byte(BFPCTRL, 0);
 	
 	// set TXnRTS as inputs

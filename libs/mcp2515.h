@@ -16,28 +16,32 @@
 #define MCP2515_PORT_RESET     PORTF
 #define MCP2515_PIN_RESET      PINF1
 
+// -=-=-=--=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=
+// MCP2515 register manipulation
+// -=-=-=--=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=
+
 /**
  * Reads a buffer from MCP2515 register
  * 
- * @param addr Selecting address to read
- * @param buf Buffer pointer to save data
- * @param count Number of times reading buffer
+ * @param addr - Selecting address to read
+ * @param buf - Buffer pointer to save data
+ * @param count - Number of times reading buffer
 */
 void MCP2515_read_buf(uint8_t addr, uint8_t* buf, uint8_t count);
 
 /**
  * Write to a buffer of MCP2515 register
  * 
- * @param addr Selecting address to write
- * @param buf Buffer which will be written
- * @param count Number of time writing buffer
+ * @param addr - Selecting address to write
+ * @param buf - Buffer which will be written
+ * @param count - Number of time writing buffer
 */
 void MCP2515_write_buf(uint8_t addr, uint8_t* buf, uint8_t count);
 
 /**
  * Reads a byte from register
  * 
- * @param addr Address to read from
+ * @param addr - Address to read from
  * @return 8bit int resulted value
 */
 uint8_t MCP2515_read_byte(uint8_t addr);
@@ -45,10 +49,14 @@ uint8_t MCP2515_read_byte(uint8_t addr);
 /**
  * Write a byte to resgister
  * 
- * @param addr Address to write in
- * @param 8bit data to send
+ * @param addr - Address to write in
+ * @param data - 8bit data to send
 */
 void MCP2515_write_byte(uint8_t addr, uint8_t data);
+
+// -=-=-=--=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=
+// MCP2515 chip control
+// -=-=-=--=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=
 
 /**
  * Perform Software Reset
@@ -74,19 +82,25 @@ uint8_t MCP2515_status(void);
 */
 void MCP2515_start_send(uint8_t TXB_mask);
 
-/** Modefy bits in the MCP25** registers
+/**
+ * Modefy bits in the MCP25** registers
  * Function performs XOR for bits based on the masks.
  * As funtion supported by not all registers MCP25**,
  * function checks the valid addr and ignores others.
- * @param addr address of register
- * @param mask Mask for bit modefy
- * @param data value of bits
+ * 
+ * @param addr - address of register
+ * @param mask - Mask for bit modefy
+ * @param data - value of bits
  */
 void MCP2515_bit_modify(uint8_t addr, uint8_t mask, uint8_t data);
 
 /**
  * Sets mask to RXM0SIDH registers
  * param id 1 - RXM1SIDH, other - RMX0SIDH
+ * 
+ * @param id - ID for register
+ * @param ext - flag for 0 as notmal, 1 extended
+ * @param mask - Mask itself
 */
 void MCP2515_set_mask(uint8_t id, uint8_t ext, uint32_t mask);
 
@@ -99,9 +113,13 @@ void MCP2515_set_mask(uint8_t id, uint8_t ext, uint32_t mask);
 */
 void MCP2515_set_filtr(uint8_t id, uint8_t ext, uint32_t filtr);
 
+// -=-=-=--=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=
+// MCP2515 MODE CHANGE
+// -=-=-=--=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=
+
 /**
  * Set mode
- * @param mode 80bit mode select
+ * @param mode - 8bit mode select
  * @return Status of set. -1 if fail.
 */
 uint8_t MCP2515_set_mode(uint8_t mode);
