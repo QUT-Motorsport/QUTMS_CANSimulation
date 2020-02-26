@@ -127,17 +127,47 @@
 #define BUKT1       _BV(1)  // R-0: Read-only copy of BUKT bit
 #define FILHIT0     _BV(0)  // R-0: Filter Hit - indicates which acceptance filter enabled reception of message
 
-#define NOFILTR_RX    (RXM1 | RXM0)
+#define NOFILTR_RX      (RXM1 | RXM0)
 #define EXT_FILTR_RX    RXM1
 #define STD_FILTR_RX    RXM0
 #define ANY_FILTR_RX    (0)
 
-/* MCP2510 address registers */
+/* CAN CONTROL REGISTER (ADDRESS: XFh) */
 #define CANCTRL   0x0F
+/* CAN STATUS REGISTER (ADDRESS: XEh) */
 #define CANSTAT   0x0E
+
+/* ADDRESS: 2Ah. SJW[1:0] - Synchronization Jump Width Length bits. BRP[5:0] Baud Rate Prescaler bits  T_Q = 2 x (BRP[5:0] + 1)/F_OSC */
 #define CNF1      0x2A
+#define SJW1		7
+#define SJW0		6
+#define BRP5		5
+#define BRP4		4
+#define BRP3		3
+#define BRP2		2
+#define BRP1		1
+#define BRP0		0
+
+/* ADDRESS 29h. BTLMODE: PS2 Bit Time Length bit. SAM (Sample Point Configuration). PHSEG1[2:0]: PS1 Length bits (PHSEG1[2:0] + 1) x T_Q. PRSEG[2:0]: Propagation Segment Length bits
+(PRSEG[2:0] + 1) x T_Q.*/
 #define CNF2      0x29
+#define BTLMODE		7
+#define SAM			6
+#define PHSEG12		5
+#define PHSEG11		4
+#define PHSEG10		3
+#define PHSEG2		2
+#define PHSEG1		1
+#define PHSEG0		0
+
+/*SOF - State-of-Frame. WAKFIL: Wake-up Filter bit. PHSEG2[2:0] PS2 Length bits. (PHSEG2[2:0] + 1) x T_Q. Minimum valied for PS2 2T_Qs*/
 #define CNF3      0x28
+#define WAKFIL		6   // Wake-up Filter
+#define PHSEG22		2   // PS2 Length bits
+#define PHSEG21		1   // (PHSEG2[2:0] + 1) x T_Q
+#define PHSEG20		0   // ???
+
+/**/
 #define BFPCTRL   0x0C
 #define EFLG      0x2D
 #define TEC       0x1C
@@ -201,31 +231,5 @@
 #define RX0IE        _BV(0)
 #define RX0IF        _BV(0)
 #define RX0I        _BV(0)
-
-/** \brief	Bit definition for CNF3 */
-#define WAKFIL		6
-#define PHSEG22		2
-#define PHSEG21		1
-#define PHSEG20		0
-
-/** \brief	Bit definition for CNF2 */
-#define BTLMODE		7
-#define SAM			6
-#define PHSEG12		5
-#define PHSEG11		4
-#define PHSEG10		3
-#define PHSEG2		2
-#define PHSEG1		1
-#define PHSEG0		0
-
-/** \brief	Bit definition for CNF1 */
-#define SJW1		7
-#define SJW0		6
-#define BRP5		5
-#define BRP4		4
-#define BRP3		3
-#define BRP2		2
-#define BRP1		1
-#define BRP0		0
 
 #endif
