@@ -43,13 +43,3 @@ void send_buffer(char * buffer) {
 	if (control_usb_is)
 		usb_serial_write((uint8_t *) buffer, strlen(buffer));
 }
-void writeInHex(unsigned char number) {
-    send_str(PSTR("\r\n writeInHex \r\n"));
-    send_str(PSTR("\r\n writeInHex \r\n"));
-}
-
-void writeInDec(unsigned char code) {
-    send_str(PSTR("\r\n writeInDec \r\n"));
-    send_str(PSTR("\r\n writeInDec \r\n"));
-    send_str(PSTR("\r\n writeInDec \r\n"));
-}

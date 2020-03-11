@@ -41,12 +41,11 @@ void (*int_handler)(void);
 void extInterruptINIT(void (*handler)(void)) {
     // Set function pointer 
     int_handler = handler;
-    // Initialize external interrupt on pin INT0 on failing edge 
+    // TODO: Initialize external interrupt on pin INT0 on failing edge 
     //MCUCR |= (1 << ISC01);
     //GICR |= (1 << INT0); 
 }
 // System interrupt handler 
-SIGNAL(INT0_vect)
-{
+SIGNAL(INT0_vect) {
     int_handler();
 }

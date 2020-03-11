@@ -13,9 +13,10 @@
 #include "mcp2515.h"
 #include "can.h"
 
-void test_can(void);
-void control_usb_init(void);
+void send_can(void);
 void receive_can(void);
+void control_usb_init(void);
+
 
 /* Main Routine*/
 int main(void) {
@@ -51,7 +52,7 @@ int main(void) {
         if (mcp_loopback() == 0) {
             send_str(PSTR("\r\nMCP2515 test is successfull\r\n" ));
             _delay_ms(2000);
-            //test_can();
+            //send_can();
             receive_can();
         }
     }
@@ -60,18 +61,18 @@ int main(void) {
         send_buffer( buf );		
 	}    
     
-    test_can();
+    send_can();
     
 }
 
-void test_can() {
+void send_can() {
     CanMessage msg1;
 	CAN_RESULT res;
     int isLed = 0;  
     int i, j, k;
         
     char buf[32];
-    char s_buffer[15];
+    // char s_buffer[15];
 
     init_msg(&msg1);
     msg1.id = 0x0A000000;
@@ -84,7 +85,7 @@ void test_can() {
     i = 0;
     j = 0;
     k = 5000;
-    int16_t r;
+    // int16_t r;
     while (1) {
         _delay_us(500);
         j++;              
@@ -94,11 +95,11 @@ void test_can() {
             
             if (isLed == 0) {                
                 isLed = 1;    
-                send_str(PSTR("Try to send the message via CAN\r\n" ));
+                send_str(PSTR("\r\nMCP2515: Try to send the message via CAN\r\n" ));
                 res = send_message(&msg1); 
                 
                 if (res == CAN_OK) {
-                    send_str(PSTR("Message was written to the buffer\r\n" ));
+                    send_str(PSTR("\r\nMCP2515: Message was written to the buffer\r\n" ));
                     
 	            } else if (res == CAN_MCP_ERROR) {
                     send_str(PSTR("Error ( MCP_ERROR ): could not send the message!\r\n\r\n" ));
@@ -114,26 +115,45 @@ void test_can() {
 	            } 
             }                         
             
-            r = recv_str(buf, sizeof(int16_t));
-            snprintf(s_buffer, sizeof(s_buffer), "%d", r);
-            send_buffer( s_buffer );
-            if ( r == 0 ) {
-            } else if ( r == 'w' ) {
-                isLed = 0;
-                send_str(PSTR("isLed 0 again"));
-                return;
-            } else if ( r == 's' ) {
-                send_str(PSTR("switch to sniffer"));
-                return;
-            }
+            // r = recv_str(buf, sizeof(int16_t));
+            // snprintf(s_buffer, sizeof(s_buffer), "%d", r);
+            // send_buffer( s_buffer );
+            // if ( r == 0 ) {
+            // } else if ( r == 'w' ) {
+            //     isLed = 0;
+            //     send_str(PSTR("isLed 0 again"));
+            //     return;
+            // } else if ( r == 's' ) {
+            //     send_str(PSTR("switch to sniffer"));
+            //     return;
+            // }
              
-            i++;              
-            if (i>1000) i=0;
+            // i++;              
+            // if (i>1000) i=0;
             
             send_str(PSTR("\r\nMCP2515: Loop\r\n"));
                         
         }   
     }
+}
+
+void receive_can() {
+	CanMessage message;
+
+    send_str(PSTR("\r\nMCP2515: Receive-\r\n" ));
+    send_str(PSTR("Wait for messages to be received!\r\n\r\n" ));
+
+    if (MCP2515_check_message()) {
+        send_str(PSTR("\r\nMCP2515: Message received!\r\n" ));
+
+        // read the message from the buffers
+        if (read_message(&message) == CAN_OK) {
+            send_str(PSTR("---- received message ---- \r\n" ));
+            print_can_message(&message);            
+        } else {
+            send_str(PSTR("Can't read the message\r\n" ));
+        }            			
+    }    
 }
 
 void control_usb_init(void){
@@ -151,24 +171,3 @@ void control_usb_init(void){
     // "AT command", which can still be buffered.
     usb_serial_flush_input();
 }
-
-void receive_can() 
-{
-	CanMessage message;
-
-    send_str(PSTR("-Receive-\r\n" ));
-    send_str(PSTR("Wait for messages to be received!\r\n\r\n" ));
-
-    if (MCP2515_check_message()) {
-        send_str(PSTR("Message received!\r\n" ));
-
-        // read the message from the buffers
-        if (read_message(&message) == CAN_OK) {
-            send_str(PSTR("---- received message ---- \r\n" ));
-            print_can_message(&message);
-            send_str(PSTR("-successfull-\r\n" ));
-        } else {
-            send_str(PSTR("Can't read the message\r\n" ));
-        }            			
-    }    
-}  
