@@ -1,2 +1,6 @@
 main.hex
 main.o
+
+# Pi Ignore files
+pi_libs/__pycache__/*
+*.pyc

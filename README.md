@@ -20,7 +20,7 @@ The code is dedicated only for QUT Motorsports usage. Code functionality is base
 To get started with implementation, the UNIX based environment has to be created. Usage of Cygwin within Windows environment is acceptable. All OS has to have avr-gcc and relative libraries installed. Refer to SOWTWARE_REQUIREd.
 
 Before implementation, hardware based settings has to be set for used language. Refer to Libs folder to identefy or correct pinouts for SPI signals.
-NOTE that Raspberry Pi has only 2 CS pins for SPI needs. T
+NOTE that Raspberry Pi has only 2 CS pins for SPI needs. Refer to README_PI.md for configuration instructions.
 ---
 ## Build
 ### Requirements
