@@ -48,7 +48,11 @@
  * F_CLCOUT     System Clock/2: 01
  * F_CLCOUT     System Clock/4: 10
  * F_CLCOUT     System Clock/8: 11
+ * 
+ * CAN CONTROL REGISTER (ADDRESS: XFh)
 */
+#define CANCTRL   0x0F
+
 #define MODE_NORMAL   0x00      // Normal Operation Mode: 000x xxxx
 #define MODE_SLEEP    0x20      // Sleep Mode: 001x xxxx
 #define MODE_LOOP     0x40      // Loopback Mode: 010x xxxx
@@ -64,6 +68,22 @@
 #define CLKEN		2   // R/W-1: One-Shot Mode - 1:OneTine 0:Reattempt
 #define CLKPRE1		1   // R/W-1: CLKOUT Pin prescaler
 #define CLKPRE0		0   // R/W-1: CLKOUT Pin prescaler
+
+/** CAN STATUS REGISTER (ADDRESS: XEh)
+ * The requested mode must be verified by reading 
+ * the OPMODE[2:0] bits (CANSTAT[7:5]);
+ * ICOD[2:0]: Interrupt Flag Code bits
+ * 
+ * No interrupt             000
+ * Error Interupt           001
+ * Wakeup interupt          010
+ * TXB0 interrupt           011
+ * TXB1 interupt            100
+ * TXB2 interupt            101
+ * RXB0 interupt            110
+ * RXB1 interupt            111
+*/
+#define CANSTAT   0x0E
 
 /**     Tx adress registers
  * TXBnCTRL - control register associated with the message buffer.
@@ -131,11 +151,6 @@
 #define EXT_FILTR_RX    RXM1
 #define STD_FILTR_RX    RXM0
 #define ANY_FILTR_RX    (0)
-
-/* CAN CONTROL REGISTER (ADDRESS: XFh) */
-#define CANCTRL   0x0F
-/* CAN STATUS REGISTER (ADDRESS: XEh) */
-#define CANSTAT   0x0E
 
 /* ADDRESS: 2Ah. SJW[1:0] - Synchronization Jump Width Length bits. BRP[5:0] Baud Rate Prescaler bits  T_Q = 2 x (BRP[5:0] + 1)/F_OSC */
 #define CNF1      0x2A
