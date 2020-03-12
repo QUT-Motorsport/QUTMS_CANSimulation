@@ -59,7 +59,7 @@ void MCP2515_write_byte(uint8_t addr, uint8_t data);
 // -=-=-=--=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=
 
 /**
- * Perform Software Reset
+ * Perform Software Reset. Controller will move to configuration mode.
 */
 void MCP2515_reset(void);
 
@@ -124,32 +124,65 @@ void MCP2515_set_filtr(uint8_t id, uint8_t ext, uint32_t filtr);
 */
 uint8_t MCP2515_set_mode(uint8_t mode);
 
-/**
- * Set normal mode
+/**     Normal mode
+ * Normal mode is the standard operating mode of the
+ * MCP2515. In this mode, the device actively monitors
+ * all bus messages and generates Acknowledge bits,
+ * error frames, etc. This is also the only mode in which
+ * the MCP2515 will transmit messages over the CAN bus.
+ * 
  * @return - result of transmission
 */
 uint8_t MCP2515_mode_normal(void);
 
-/**
- * Set Configuration mode
+/**     Configuration Mode
+ * Configuration mode is automatically selected
+ * after power-up, a Reset or can be entered from
+ * any other mode. When Configuration mode is entered,
+ * all error counters are cleared. Configuration
+ * mode is the only mode where the following
+ * registers are modifiable:
+ *      CNF1, CNF2, CNF3 registers
+ *      TXRTSCTRL registers
+ *      Filter registers
+ *      Mask registers
+ * 
  * @return - result of transmission
 */
 uint8_t MCP2515_mode_config(void);
 
-/**
- * Set Sleep mode
+/**     Sleep mode
+ * This mode minimises current consumption of the device.
+ * SPI remains active, all registers can be accessed. When
+ * in internal Sleep mode, the wake-up interrupt is still
+ * active (if enabled). Stops internal oscilator. The TXCAN
+ * pin will remain in the recessive state while the MCP2515
+ * is in Sleep mode.
+ * 
  * @return - result of transmission
 */
 uint8_t MCP2515_mode_sleep(void);
 
-/**
- * Set Listen mode
+/**     Listen mode
+ * Listen-Only mode provides a means for the MCP2515 to
+ * receive all messages (including messages with errors).
+ * Listen-Only mode is a silent mode, meaning no
+ * messages will be transmitted while in this mode (including
+ * error flags or Acknowledge signals). In Listen-Only mode,
+ * both valid and invalid messages will be received, regardless
+ * of filters and masks or the Receive Buffer Operating Mode
+ * bits, RXMn. The error counters are reset and deactivated
+ * in this state. 
+ * 
  * @return - result of transmission
 */
 uint8_t MCP2515_mode_listen(void);
 
-/**
- * Set Loopback mode
+/**     Loopback mode
+ * Loopback mode will allow internal transmission of
+ * messages from the transmit buffers to the receive buffers
+ * without actually transmitting messages on the CAN bus.
+ * This mode can be used in system development and testing.
  * @return - result of transmission
 */
 uint8_t MCP2515_mode_loopback(void);
